@@ -19,7 +19,7 @@ services:
 
   # ---------- 后端 (Spring Boot) ----------
   backend:
-    image: openjdk:17-jdk-slim
+    image: eclipse-temurin:17-jdk-alpine
     container_name: video-backend
     ports:
       - "8081:8081"

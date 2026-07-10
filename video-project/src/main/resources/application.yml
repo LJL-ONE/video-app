@@ -6,6 +6,17 @@ server:
 spring:
   application:
     name: video-server
+  # ============ 禁用 Nacos 配置检查 ============
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        enabled: false
+      server-addr: 127.0.0.1:8848
+  config:
+    import: "optional:nacos:"
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

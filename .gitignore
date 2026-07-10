@@ -1,0 +1,42 @@
+# ==========================================
+# 视频网站项目 - Git 忽略配置
+# ==========================================
+
+# 前端依赖
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 前端构建产物
+video-front/dist/
+video-front/.env.local
+video-front/.env.*.local
+
+# 后端构建产物
+video-project/target/
+video-project/.idea/
+video-project/*.iml
+
+# 日志和数据
+*.log
+logs/
+a/data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# 临时文件
+tmp/
+temp/

@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: ${IMAGE_REGISTRY_PREFIX}mysql:8.0
+    container_name: video-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: video_meeting
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - ./a/data/mysql:/var/lib/mysql
+      - ./video-project/src/main/resources/db/video_meeting.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: ${IMAGE_REGISTRY_PREFIX}redis:7-alpine
+    container_name: video-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./a/data/redis:/data
+    restart: always
+    command: redis-server --appendonly yes
+
+  rabbitmq:
+    image: ${IMAGE_REGISTRY_PREFIX}rabbitmq:3-management
+    container_name: video-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - ./a/data/rabbitmq:/var/lib/rabbitmq
+    restart: always
+
+  minio:
+    image: ${IMAGE_REGISTRY_PREFIX}minio/minio:latest
+    container_name: video-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./a/data/minio:/data
+    command: server /data --address ":9000" --console-address ":9001"
+    restart: always

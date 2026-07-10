@@ -3,10 +3,24 @@
 # 通过 --spring.profiles.active=prod 激活
 # 覆盖 application.yml，将各中间件 host 指向 docker compose 服务名
 # ============================================
+
 server:
   port: ${SERVER_PORT:8081}
 
 spring:
+  # 生产环境禁用 Nacos 配置导入（避免 dataId must be specified 错误）
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+        enabled: false
+      discovery:
+        enabled: false
+  # 清空 config.import，避免触发 Nacos 加载
+  config:
+    import: ""
+
   datasource:
     # 容器内通过服务名 mysql 访问，端口为容器内部端口 3306
     url: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:video_meeting}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false

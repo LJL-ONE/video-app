@@ -1,7 +1,7 @@
 # ==========================================
 # 视界视频社区 - Docker 一键部署
 # 前端(Nginx) + 后端(Spring Boot) + 全部中间件
-# 使用方法：docker compose --env-file .env -f deploy/docker-compose-prod.yml up -d
+# 使用方法：docker compose -f docker-compose-prod.yml --env-file .env up -d
 # ==========================================
 
 services:
@@ -26,7 +26,6 @@ services:
     ports:
       - "${SERVER_PORT:-8081}:8081"
     environment:
-      # 应用通过 application-prod.yml 读取，此处注入环境变量供覆盖
       MYSQL_DATABASE: ${MYSQL_DATABASE:-video_meeting}
       MYSQL_USER: ${MYSQL_USER:-root}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root123456}
@@ -44,7 +43,7 @@ services:
     volumes:
       - ./video-project/target:/app
     working_dir: /app
-    command: java -jar *.jar --spring.profiles.active=prod
+    command: java -jar video-server-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
     depends_on:
       mysql:
         condition: service_healthy
@@ -69,7 +68,7 @@ services:
       MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
       TZ: Asia/Shanghai
     volumes:
-      - ../a/data/mysql:/var/lib/mysql
+      - ./a/data/mysql:/var/lib/mysql
       - ./video-project/src/main/resources/db/video_meeting.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
     healthcheck:
@@ -85,7 +84,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ../a/data/redis:/data
+      - ./a/data/redis:/data
     command: redis-server --appendonly yes
     restart: always
     healthcheck:
@@ -105,7 +104,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
     volumes:
-      - ../a/data/rabbitmq:/var/lib/rabbitmq
+      - ./a/data/rabbitmq:/var/lib/rabbitmq
     restart: always
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
@@ -124,7 +123,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
     volumes:
-      - ../a/data/minio:/data
+      - ./a/data/minio:/data
     command: server /data --address ":9000" --console-address ":9001"
     restart: always
     healthcheck:
